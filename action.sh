@@ -7,7 +7,7 @@ echo "postgres dump to s3 - uploading to s3"
 now=$(date +"%Y-%m-%d_%H:%M")
 date=$(date -R)
 content_type="application/octet-stream"
-object="/${PG_TO_S3_AWS_OBJECT_PREPEND}$now"
+object="/${PG_TO_S3_AWS_OBJECT_PREPEND}${now}${PG_TO_S3_AWS_OBJECT_APPEND}.dump"
 string="PUT\n\n$content_type\n$date\n/${PG_TO_S3_AWS_BUCKET}$object"
 signature=$(echo -en "$string" | openssl sha1 -hmac "${PG_TO_S3_AWS_SECRET_ACCESS_KEY}" -binary | base64)
 curl -X PUT -T db.dump \
