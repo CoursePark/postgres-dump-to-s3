@@ -4,7 +4,7 @@ echo "postgres dump to s3 - getting a dump of database"
 PGOPTIONS="-c statement_timeout=3600000" pg_dump -Fc --no-owner --clean -o $PG_TO_S3_DATABASE_URL > db.dump
 echo "postgres dump to s3 - uploading to s3"
 # S3 Upload using curl inspired by https://gist.github.com/chrismdp/6c6b6c825b07f680e710
-now=$(date +"%Y-%m-%d_%H:%M")
+now=$(date +"%Y-%m-%dT%H:%M")
 date=$(date -R)
 content_type="application/octet-stream"
 object="/${PG_TO_S3_AWS_OBJECT_PREPEND}${now}${PG_TO_S3_AWS_OBJECT_APPEND}.dump"
