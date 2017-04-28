@@ -1,9 +1,10 @@
 FROM alpine
 
-# curl for S3 upload
-# openssl for S3 upload
+# python for aws-cli, for s3 uploading
 # postgresql for pg_dump
-RUN apk --no-cache add curl openssl postgresql
+RUN apk --no-cache add postgresql python py-pip && \
+	pip install awscli && \
+	apk --purge -v del py-pip
 
 COPY action.sh /
 
