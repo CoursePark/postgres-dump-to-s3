@@ -10,4 +10,4 @@ COPY action.sh /
 
 RUN chmod +x action.sh
 
-CMD echo "$PG_TO_S3_CRON_MINUTE $PG_TO_S3_CRON_HOUR * * * /action.sh" > /var/spool/cron/crontabs/root && crond -d 8 -f
+CMD echo "${CRON_MINUTE:-$(shuf -i 0-59 -n1)} ${CRON_HOUR:-*} * * * /action.sh" > /var/spool/cron/crontabs/root && crond -d 8 -f
