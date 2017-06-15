@@ -1,8 +1,10 @@
 FROM alpine
 
-# python for aws-cli, for s3 uploading
 # postgresql for pg_dump
-RUN apk --no-cache add postgresql python py-pip && \
+RUN apk --no-cache add postgresql
+
+# python for aws-cli, for s3 uploading
+RUN apk --no-cache add python py-pip && \
 	pip install awscli && \
 	apk --purge -v del py-pip
 
