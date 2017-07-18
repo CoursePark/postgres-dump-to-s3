@@ -1,7 +1,11 @@
 FROM alpine
 
+ARG pg_version
+
 # postgresql for pg_dump
-RUN apk --no-cache add postgresql
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/v3.4/main' >> /etc/apk/repositories
+
+RUN echo ${pg_version}; apk --no-cache add postgresql-client=${pg_version}
 
 # python for aws-cli, for s3 uploading
 RUN apk --no-cache add python py-pip && \
