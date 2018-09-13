@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:3.6
 
 ARG pg_alpine_branch
 ARG pg_version

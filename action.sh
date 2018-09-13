@@ -2,7 +2,8 @@
 
 echo "postgres dump to s3 - getting a dump of the database"
 tempFile=$(mktemp -u)
-PGOPTIONS="-c statement_timeout=3600000" pg_dump -Fc --no-owner --clean -o $DATABASE_URL > $tempFile
+PGOPTIONS="-c statement_timeout=3600000" pg_dump -Fc --no-owner --clean -o $DATABASE_URL > $tempFile \
+  || (echo "postgres dump to s3 - failed" && exit 1)
 echo "postgres dump to s3 - uploading the dump file to s3"
 if [ -n "${DUMP_OBJECT}" ]; then
   object=${DUMP_OBJECT}
