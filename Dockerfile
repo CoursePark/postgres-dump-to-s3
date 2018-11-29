@@ -3,8 +3,8 @@ FROM alpine:3.6
 ARG pg_alpine_branch
 ARG pg_version
 
-# python for aws-cli, for s3 uploading
-RUN apk --no-cache add python py-pip && \
+# python for aws-cli, for s3 uploading, jq for dealing with AWS Cli
+RUN apk --no-cache add python py-pip jq && \
 	pip install awscli && \
 	apk --purge -v del py-pip
 
