@@ -18,11 +18,11 @@ if [ -n "${bucketEncrypt}" ]; then
   if echo ${sse} | jq -e '.KMSMasterKeyID' > /dev/null; then
     kmMasterKeyId="$(echo ${sse} | jq -j '.KMSMasterKeyID')"
     kmsKey="$(aws --region ${AWS_REGION} kms describe-key --key-id ${kmMasterKeyId})"
-    sseArgs="--sse aws:kms --sse-kms-key-id $(echo ${kmsKey} | jq -j '.KeyMetadata.Arn')"
+    sseArgs="--server-side-encryption aws:kms --ssekms-key-id $(echo ${kmsKey} | jq -j '.KeyMetadata.Arn')"
   else
-    sseArgs="--sse AES256"
+    sseArgs="--server-side-encryption AES256"
   fi
 fi
-eval aws --only-show-errors --region ${AWS_REGION} s3 cp $sseArgs $tempFile s3://${AWS_BUCKET}/$object
+eval aws --region ${AWS_REGION} s3api put-object $sseArgs --bucket ${AWS_BUCKET} --body $tempFile --key $object
 rm $tempFile
 echo "postgres dump to s3 - complete"
