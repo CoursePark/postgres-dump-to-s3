@@ -1,23 +1,31 @@
-#! /bin/sh
+#!/usr/bin/env sh
 
-builds=$(echo '
-9.6.10     9.6.10-r0   v3.6
-#9.6.3     9.6.3-r0    v3.6
-9.6        9.6.10-r0   v3.6
-9          9.6.10-r0   v3.6
-latest     9.6.10-r0   v3.6
-#9.5.7     9.5.7-r0    v3.4
-#9.5       9.5.7-r0    v3.4
-' | grep -v '^#' | tr -s ' ')
+alpine_version='3.8'
+legacy_image=false
+pg_major_version='10'
+pg_package_version='10.10'
 
-IFS=$'\n'
-for build in $builds; do
-  tag=$(echo $build | cut -d ' ' -f 1 )
-  pgVersion=$(echo $build | cut -d ' ' -f 2)
-  pgAlpineBranch=$(echo $build | cut -d ' ' -f 3)
-  
-  echo docker build --tag bluedrop360/postgres-dump-to-s3:$tag --build-arg pg_version="$pgVersion" --build-arg pg_alpine_branch=$pgAlpineBranch .
-  eval docker build --tag bluedrop360/postgres-dump-to-s3:$tag --build-arg pg_version="$pgVersion" --build-arg pg_alpine_branch=$pgAlpineBranch .
-  echo docker push bluedrop360/postgres-dump-to-s3:$tag
-  eval docker push bluedrop360/postgres-dump-to-s3:$tag
+builds=\
+"${pg_package_version}_${pg_package_version}-r0_${alpine_version}",\
+"${pg_major_version}_${pg_package_version}-r0_${alpine_version}"
+
+if [ "${legacy_image}" = 'false' ]; then
+  builds="${builds}","latest_${pg_package_version}-r0_${alpine_version}"
+fi
+
+echo $builds | tr ',' '\n' | while read build; do
+  alpine_version=$(echo "${build}" | cut -d '_' -f 3)
+  pg_dump_to_s3_tag=$(echo "${build}" | cut -d '_' -f 1 )
+  pg_package_version=$(echo "${build}" | cut -d '_' -f 2)
+
+  echo ""
+  echo "--------------------------------"
+  echo "POSTGRES-DUMP-TO-S3 TAG: ${pg_dump_to_s3_tag}"
+  echo "POSTGRES PACKAGE VERSION: ${pg_package_version}"
+  echo "--------------------------------"
+
+  echo docker build --tag bluedrop360/postgres-dump-to-s3:$pg_dump_to_s3_tag --build-arg pg_package_version=$pg_package_version --build-arg alpine_version="${alpine_version}" .
+  eval docker build --tag bluedrop360/postgres-dump-to-s3:$pg_dump_to_s3_tag --build-arg pg_package_version=$pg_package_version --build-arg alpine_version="${alpine_version}" . || exit 1
+  echo docker push bluedrop360/postgres-dump-to-s3:$pg_dump_to_s3_tag
+  eval docker push bluedrop360/postgres-dump-to-s3:$pg_dump_to_s3_tag || exit 1
 done
