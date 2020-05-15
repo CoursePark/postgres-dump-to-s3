@@ -2,7 +2,7 @@ ARG alpine_version
 FROM alpine:${alpine_version}
 
 ARG alpine_version
-ARG pg_package_version
+ARG pg_full_version
 
 #--------------------------------------------------------------------------------
 # Install dependencies
@@ -12,7 +12,7 @@ ARG pg_package_version
 #--------------------------------------------------------------------------------
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/v${alpine_version}/main" >> /etc/apk/repositories
 
-RUN apk --no-cache --update add dumb-init postgresql=${pg_package_version} curl python3 && \
+RUN apk --no-cache --update add dumb-init postgresql=${pg_full_version} curl python3 && \
 	curl https://bootstrap.pypa.io/get-pip.py | python3 && \
 	pip install awscli && \
 	rm -f /usr/bin/pip && \

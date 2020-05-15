@@ -1,0 +1,28 @@
+########################################################
+# Docker Compose: https://docs.docker.com/compose
+########################################################
+# This file is for local testing
+# - Copy contents to `docker-compose.override.yml`
+# - Update the volume and environment variable values
+# - BUILD: docker-compose build
+# - BUILD AND RUN: docker-compose up --build
+########################################################
+version: '3'
+
+services:
+  postgres-restore-from-s3:
+    image: postgres-restore-from-s3:11.7
+    network_mode: 'host'
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        alpine_version: '3.9'
+        pg_full_version: '11.7-r0'
+    environment:
+      AWS_BUCKET: <AWS_BUCKET_NAME>
+      AWS_REGION: <AWS_REGION_NAME>
+      DATABASE_URL: postgres://<DB_NAME>:<PASSPHRASE>@<HOST>:<PORT>/<DB_NAME>
+      DUMP_OBJECT_PREFIX: <DB_NAME>/postgres/
+    volumes:
+      - <PROJECT_DIRECTORY>/build/postgres/dump:/cache:rw
