@@ -2,6 +2,25 @@
 
 Cron based database dump and upload to S3.
 
+## Build
+
+`./build_push.sh [-p <FILE>, --package <FILE>]`
+
+`./build_push.sh -p 11.7-3.9`
+
+### Package files
+
+Each package file represents a release for a particular `postgres` branch.
+
+The contents of the latest package file may look like this:
+
+```
+ALPINE_VERSION='3.9'
+PG_BASE_VERSION='11'
+PG_FULL_VERSION='11.7'
+PG_LATEST=true
+```
+
 ## Usage
 
 Typically this image is instantiated as a container among many others and would have the responsibility of getting a database dump and uploading it to S3 at a particular time of day.
